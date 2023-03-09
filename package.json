@@ -2,11 +2,17 @@
   "name": "nest-sensor",
   "private": true,
   "license": "MIT",
+  "type": "module",
   "devDependencies": {
+    "@types/node": "^18.14.6",
     "typescript": "4.9.5"
   },
   "scripts": {
     "start": "npm run build && node lib/index.js",
     "build": "tsc --build"
+  },
+  "dependencies": {
+    "@influxdata/influxdb-client": "^1.33.2",
+    "node-fetch": "^3.3.0"
   }
 }
