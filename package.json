@@ -1,0 +1,12 @@
+{
+  "name": "nest-sensor",
+  "private": true,
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "4.9.5"
+  },
+  "scripts": {
+    "start": "npm run build && node lib/index.js",
+    "build": "tsc --build"
+  }
+}
