@@ -24,15 +24,15 @@ async function main() {
 
   const humidity =
     data.devices[0]?.traits["sdm.devices.traits.Humidity"]
-      .ambientHumidityPercent!;
+      .ambientHumidityPercent ?? NaN;
 
   const temperature =
     data.devices[0]?.traits["sdm.devices.traits.Temperature"]
-      .ambientTemperatureCelsius!;
+      .ambientTemperatureCelsius ?? NaN;
 
-  const setpoint =
+  const setpoint: number =
     data.devices[0]?.traits["sdm.devices.traits.ThermostatTemperatureSetpoint"]
-      .heatCelsius!;
+      .heatCelsius ?? NaN;
 
   const heatOn =
     data.devices[0]?.traits["sdm.devices.traits.ThermostatHvac"].status ===
@@ -45,11 +45,17 @@ async function main() {
     heat_on: heatOn,
   });
 
-  const point = new Point("thermostat_reading")
-    .floatField("temperature", cToF(temperature))
-    .floatField("humidity", humidity / 100)
-    .floatField("setpoint", cToF(setpoint))
-    .booleanField("heat_on", heatOn);
+  const point = new Point("thermostat_reading");
+  point.booleanField("heat_on", heatOn);
+  if (!isNaN(cToF(temperature))) {
+    point.floatField("temperature", cToF(temperature));
+  }
+  if (!isNaN(humidity)) {
+    point.floatField("humidity", humidity / 100);
+  }
+  if (!isNaN(cToF(setpoint))) {
+    point.floatField("setpoint", cToF(setpoint));
+  }
   writeApi.writePoint(point);
   writeApi.flush();
 }
