@@ -1,13 +1,21 @@
 import { getData } from "./api.js";
-import { InfluxDB, Point } from "@influxdata/influxdb-client";
-import { ENV } from "./env.js";
+import client from "prom-client";
+import http from "http";
 
-const influx = new InfluxDB({
-  url: ENV("INFLUX_URL"),
-  token: ENV("INFLUX_TOKEN"),
+const metricsServer = http.createServer((__req, res) => {
+  res.setHeader("Content-Type", client.register.contentType);
+  res.writeHead(200);
+  client.register.metrics().then((s) => {
+    res.end(s);
+  });
 });
 
-const writeApi = influx.getWriteApi(ENV("INFLUX_ORG"), ENV("INFLUX_BUCKET"));
+metricsServer.listen(8080, "0.0.0.0");
+
+const nest_temperature_in_f = new client.Gauge({ name: "nest_temperature_in_f", help: "nest_temperature_in_f" });
+const nest_humidity_in_pct = new client.Gauge({ name: "nest_humidity_in_pct", help: "nest_humidity_in_pct" });
+const nest_setpoint_in_f = new client.Gauge({ name: "nest_setpoint_in_f", help: "nest_setpoint_in_f" });
+const nest_heat_on = new client.Gauge({ name: "nest_heat_on", help: "nest_heat_on" });
 
 function cToF(c: number): number {
   return c * 1.8 + 32;
@@ -45,19 +53,10 @@ async function main() {
     heat_on: heatOn,
   });
 
-  const point = new Point("thermostat_reading");
-  point.booleanField("heat_on", heatOn);
-  if (!isNaN(cToF(temperature))) {
-    point.floatField("temperature", cToF(temperature));
-  }
-  if (!isNaN(humidity)) {
-    point.floatField("humidity", humidity / 100);
-  }
-  if (!isNaN(cToF(setpoint))) {
-    point.floatField("setpoint", cToF(setpoint));
-  }
-  writeApi.writePoint(point);
-  writeApi.flush();
+  nest_temperature_in_f.set(cToF(temperature));
+  nest_setpoint_in_f.set(cToF(setpoint));
+  nest_humidity_in_pct.set(humidity / 100);
+  nest_heat_on.set(heatOn ? 1 : 0);
 }
 
 setInterval(main, 60000);

@@ -102,7 +102,7 @@ export async function getData(): Promise<Response> {
   const json: Response = (await response.json()) as Response;
 
   if ("error" in json && json.error.code === 401) {
-    refreshToken();
+    await refreshToken();
 
     const response = await fetch(
       `https://smartdevicemanagement.googleapis.com/v1/enterprises/ed651520-8cc0-4e25-95c3-d9258db1f00b/devices`,

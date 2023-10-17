@@ -12,7 +12,7 @@
     "build": "tsc --build"
   },
   "dependencies": {
-    "@influxdata/influxdb-client": "^1.33.2",
-    "node-fetch": "^3.3.0"
+    "node-fetch": "^3.3.0",
+    "prom-client": "^14.2.0"
   }
 }
