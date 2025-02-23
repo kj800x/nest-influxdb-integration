@@ -1,6 +1,9 @@
 import { getData } from "./api.js";
 import client from "prom-client";
 import http from "http";
+import { ENV } from './env.js';
+
+const METRICS_PORT = parseInt(ENV("METRICS_PORT", "9100"), 10);
 
 const metricsServer = http.createServer((__req, res) => {
   res.setHeader("Content-Type", client.register.contentType);
@@ -10,7 +13,7 @@ const metricsServer = http.createServer((__req, res) => {
   });
 });
 
-metricsServer.listen(8080, "0.0.0.0");
+metricsServer.listen(METRICS_PORT, "0.0.0.0");
 
 const nest_temperature_in_f = new client.Gauge({ name: "nest_temperature_in_f", help: "nest_temperature_in_f" });
 const nest_humidity_in_pct = new client.Gauge({ name: "nest_humidity_in_pct", help: "nest_humidity_in_pct" });

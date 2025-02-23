@@ -69,7 +69,7 @@ interface RefreshResponse {
 }
 
 // Ok to default to empty string because it will be refreshed if invalid
-let token = FILE_ENV("access-token", "");
+let token = FILE_ENV("data/access-token", "");
 
 async function refreshToken() {
   console.log("Refreshing Token");
