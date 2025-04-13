@@ -7,11 +7,11 @@ name: Docker
 
 on:
   push:
-    branches: ["master"]
+    branches: [ "master" ]
     # Publish semver tags as releases.
-    tags: ["v*.*.*"]
+    tags: [ 'v*.*.*' ]
   pull_request:
-    branches: ["master"]
+    branches: [ "master" ]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -19,8 +19,10 @@ env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
 
+
 jobs:
   build:
+
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -33,24 +35,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: "v20.10.0"
-
-      - name: Install dependencies
-        uses: bahmutov/npm-install@v1
-
-      - name: Build project
-        run: npm run build
-
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
         if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@e1523de7571e31dbe865fd2e80c5c7c23ae71eb4 #v3.4.0
         with:
-          cosign-release: "v2.2.3"
+          cosign-release: 'v2.2.3'
 
       # Set up BuildKit Docker container builder to be able to build
       # multi-platform images and export cache
@@ -84,7 +75,9 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            ${{ steps.meta.outputs.tags }}
+            ghcr.io/${{ github.repository }}:commit-${{ github.sha }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
