@@ -1,0 +1,8 @@
+artifactRepo:
+  owner: kj800x
+  repo: nest-influxdb-integration
+  branch: master
+
+team: home-sensors
+kind: worker
+namespace: home-sensors
