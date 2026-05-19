@@ -19,6 +19,7 @@ const nest_temperature_in_f = new client.Gauge({ name: "nest_temperature_in_f", 
 const nest_humidity_in_pct = new client.Gauge({ name: "nest_humidity_in_pct", help: "nest_humidity_in_pct" });
 const nest_setpoint_in_f = new client.Gauge({ name: "nest_setpoint_in_f", help: "nest_setpoint_in_f" });
 const nest_heat_on = new client.Gauge({ name: "nest_heat_on", help: "nest_heat_on" });
+const nest_last_success_timestamp_seconds = new client.Gauge({ name: "nest_last_success_timestamp_seconds", help: "Unix time (seconds) of the last successful Nest API fetch" });
 
 function cToF(c: number): number {
   return c * 1.8 + 32;
@@ -60,6 +61,7 @@ async function main() {
   nest_setpoint_in_f.set(cToF(setpoint));
   nest_humidity_in_pct.set(humidity / 100);
   nest_heat_on.set(heatOn ? 1 : 0);
+  nest_last_success_timestamp_seconds.set(Date.now() / 1000);
 }
 
 setInterval(main, 60000);
