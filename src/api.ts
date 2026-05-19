@@ -110,7 +110,7 @@ export async function getData(): Promise<Response> {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token.get()}`,
         },
       }
     );
